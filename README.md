@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AutoTab: Chrome Extension for Text Completions
 
-## Getting Started
+A Chrome extension that provides AI-powered text completion for any text field on the web. As you type in any input field, text area, or contenteditable element, AutoTab will suggest completions that you can accept by simply pressing the Tab key.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Works on any website and in any text input field
+- Provides real-time AI-powered text suggestions as you type
+- Accept suggestions with a simple Tab key press
+- Seamlessly integrates with existing text inputs without disrupting your workflow
+- Supports both standard text inputs and contenteditable elements
+- Intelligent debouncing to minimize API calls and improve performance
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone this repository or download the source code
+2. Run `npm install` to install all dependencies
+3. Run `npm run build` to create the distribution files (creates a new "dist" folder)
+4. Open Chrome and navigate to `chrome://extensions/`
+5. Enable "Developer mode" using the toggle in the top right corner
+6. Click "Load unpacked" and select the "dist" folder from this project
+7. The extension icon should appear in your browser toolbar - click and pin it for easy access
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Usage
 
-## Learn More
+1. Navigate to any website with text input fields
+2. Start typing in any text field
+3. As you type, AI suggestions will appear in light gray
+4. Press the Tab key to accept a suggestion
+5. Continue typing and accepting suggestions as needed
 
-To learn more about Next.js, take a look at the following resources:
+## How It Works
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The extension uses a content script that injects into web pages and attaches event listeners to track user input. When you type, the extension sends your text to a local API server that returns AI-generated completions. These completions are displayed as an overlay that perfectly matches the styling of the input field you're typing in.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Development
 
-## Deploy on Vercel
+- `npm install` - Install dependencies
+- `npm run build` - Build the extension for production
+- `npm run format` - Format code using Prettier
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Customization
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The extension's appearance and behavior can be customized by modifying the appropriate CSS and JavaScript files.
