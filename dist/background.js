@@ -1,1 +1,0 @@
-chrome.runtime.onInstalled.addListener((()=>{console.log("AI Text Completion extension installed")})),chrome.runtime.onMessage.addListener(((e,n,o)=>!0));
