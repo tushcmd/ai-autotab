@@ -7,11 +7,15 @@
         "storage",
         "activeTab"
     ],
+    "host_permissions": [
+        "http://localhost:*/*"
+    ],
     "action": {
         "default_title": "AI Text Completion",
-        "default_popup": "index.html",
         "default_icon": {
-            "16": "file.svg"
+            "16": "file.svg",
+            "48": "file.svg",
+            "128": "file.svg"
         }
     },
     "content_scripts": [
