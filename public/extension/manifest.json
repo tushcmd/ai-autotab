@@ -1,0 +1,36 @@
+{
+    "manifest_version": 3,
+    "version": "1.0",
+    "name": "AI Text Completion Tutorial",
+    "description": "AI text completion for any text field",
+    "permissions": [
+        "storage",
+        "activeTab"
+    ],
+    "action": {
+        "default_title": "AI Text Completion",
+        "default_popup": "index.html",
+        "default_icon": {
+            "16": "file.svg"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "css": [
+                "content.css"
+            ]
+        }
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self';"
+    }
+}
