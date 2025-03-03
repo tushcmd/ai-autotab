@@ -1,6 +1,13 @@
 export async function POST(req) {
   const { text } = await req.json();
 
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+
   try {
     // Use Gemini API
     const response = await fetch(
@@ -16,7 +23,7 @@ export async function POST(req) {
             {
               parts: [
                 {
-                  text: `Complete the following text naturally: "${text}"`,
+                  text: `You are a helpful text completion AI. Complete the following text naturally, continuing the user's thought. Only provide the completion, no explanations or quotes. Text to complete: "${text}"`,
                 },
               ],
             },
@@ -40,13 +47,7 @@ export async function POST(req) {
       JSON.stringify({
         completion: completion,
       }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*", // For development only
-        },
-      },
+      { status: 200, headers },
     );
   } catch (error) {
     console.error("Gemini API error:", error);
@@ -55,13 +56,18 @@ export async function POST(req) {
         error: "Failed to get completion",
         details: error.message,
       }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*", // For development only
-        },
-      },
+      { status: 500, headers },
     );
   }
+}
+
+export async function OPTIONS(req) {
+  return new Response(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
 }
