@@ -21,8 +21,35 @@ function positionSuggestionElement(target) {
   const rect = target.getBoundingClientRect();
   const computedStyle = window.getComputedStyle(target);
 
-  suggestionElement.style.top = `${rect.top + window.scrollY}px`;
-  suggestionElement.style.left = `${rect.left + window.scrollX}px`;
+  // Get cursor position for more accurate placement
+  const textBeforeCursor = getTextBeforeCursor(target);
+  const measureDiv = document.createElement("div");
+  measureDiv.style.cssText = `
+    position: absolute;
+    visibility: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: ${computedStyle.fontFamily};
+    font-size: ${computedStyle.fontSize};
+    font-weight: ${computedStyle.fontWeight};
+    line-height: ${computedStyle.lineHeight};
+    padding: ${computedStyle.padding};
+    width: ${target.offsetWidth}px;
+  `;
+  measureDiv.textContent = textBeforeCursor;
+  document.body.appendChild(measureDiv);
+
+  const cursorPosition = measureDiv.getBoundingClientRect();
+  document.body.removeChild(measureDiv);
+
+  // Calculate the line height offset
+  const lineHeightPx =
+    parseInt(computedStyle.lineHeight) ||
+    parseInt(computedStyle.fontSize) * 1.2;
+  const lines = Math.floor(cursorPosition.height / lineHeightPx);
+
+  suggestionElement.style.top = `${rect.top + window.scrollY + lines * lineHeightPx}px`;
+  suggestionElement.style.left = `${rect.left + window.scrollX + (cursorPosition.width % target.offsetWidth)}px`;
   suggestionElement.style.fontFamily = computedStyle.fontFamily;
   suggestionElement.style.fontSize = computedStyle.fontSize;
   suggestionElement.style.fontWeight = computedStyle.fontWeight;
@@ -68,14 +95,41 @@ function processSuggestion(originalText, suggestion) {
   return suggestion.trim();
 }
 
-// Request completion from background script
-function requestCompletion(text) {
-  chrome.runtime.sendMessage({ action: "getCompletion", text }, (response) => {
-    if (response && response.completion) {
-      suggestion = processSuggestion(text, response.completion);
-      updateSuggestionDisplay();
-    }
+// Add this at the top of your content.js
+function checkExtensionConnection() {
+  return new Promise((resolve) => {
+    const checkTimeout = setTimeout(() => {
+      resolve(false);
+    }, 1000);
+
+    chrome.runtime.sendMessage({ action: "ping" }, (response) => {
+      clearTimeout(checkTimeout);
+      resolve(true);
+    });
   });
+}
+
+// Modify your requestCompletion function
+async function requestCompletion(text) {
+  try {
+    const isConnected = await checkExtensionConnection();
+    if (!isConnected) {
+      console.warn("Extension connection not available");
+      return;
+    }
+
+    chrome.runtime.sendMessage(
+      { action: "getCompletion", text },
+      (response) => {
+        if (response && response.completion) {
+          suggestion = processSuggestion(text, response.completion);
+          updateSuggestionDisplay();
+        }
+      },
+    );
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
 }
 
 // Update the display of the suggestion
